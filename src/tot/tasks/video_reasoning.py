@@ -1,8 +1,7 @@
 """
-Video-based reasoning task for Tree of Thoughts framework.
+Tree of Thoughts 框架的基于视频的推理任务
 
-This module extends the base task to handle video inputs and visual reasoning
-within the Tree of Thoughts methodology.
+该模块扩展了基础任务类，以处理视频输入并在 Tree of Thoughts 方法论中进行视觉推理。
 """
 
 from typing import List, Dict, Any, Optional
@@ -12,10 +11,9 @@ from ..video_processing import create_video_processor, VideoProcessor
 
 class VideoReasoningTask(Task):
     """
-    Video reasoning task that uses visual content for Tree of Thoughts reasoning.
+    使用视觉内容进行 Tree of Thoughts 推理的视频推理任务
     
-    This task extends the base Task class to handle video inputs and perform
-    systematic reasoning on visual content.
+    该任务扩展了基础 Task 类，用于处理视频输入并对视觉内容进行系统化推理。
     """
     
     def __init__(
@@ -27,36 +25,35 @@ class VideoReasoningTask(Task):
         api_base: Optional[str] = None
     ):
         """
-        Initialize video reasoning task.
+        初始化视频推理任务
         
         Args:
-            video_url: URL or path to the video
-            reasoning_type: Type of reasoning to perform (analysis, comparison, etc.)
-            model: Vision-language model to use
-            api_key: OpenAI API key
-            api_base: API base URL
+            video_url: 视频的 URL 或路径
+            reasoning_type: 要执行的推理类型 (analysis, comparison 等)
+            model: 要使用的视觉语言模型
+            api_key: OpenAI API 密钥
+            api_base: API 基础 URL
         """
         super().__init__()
         self.video_url = video_url
-        self.reasoning_type = reasoning_type
-        self.model = model
+        self.reasoning_type = reasoning_type        self.model = model
         self.video_processor = create_video_processor(api_key, api_base)
         self.steps = []
         self.current_step = 0
     
     def __len__(self) -> int:
-        """Return the number of reasoning steps."""
+        """返回推理步骤的数量"""
         return len(self.steps)
     
     def get_input(self, idx: int) -> str:
         """
-        Get input for a specific reasoning step.
+        获取特定推理步骤的输入
         
         Args:
-            idx: Step index
+            idx: 步骤索引
             
         Returns:
-            Input prompt for the step
+            该步骤的输入提示
         """
         if idx < len(self.steps):
             return self.steps[idx].get("input", "")
@@ -64,42 +61,42 @@ class VideoReasoningTask(Task):
     
     def test_output(self, idx: int, output: str) -> Dict[str, Any]:
         """
-        Test and evaluate the output of a reasoning step.
+        测试和评估推理步骤的输出
         
         Args:
-            idx: Step index
-            output: Model output to evaluate
+            idx: 步骤索引
+            output: 要评估的模型输出
             
         Returns:
-            Evaluation results
+            评估结果
         """
-        # Basic evaluation - can be extended for specific video reasoning tasks
+        # 基础评估 - 可以针对特定的视频推理任务进行扩展
         evaluation = {
             "step": idx,
             "output": output,
             "valid": len(output.strip()) > 0,
-            "confidence": 0.5  # Default confidence
+            "confidence": 0.5  # 默认置信度
         }
         
-        # Add step-specific evaluation if available
+        # 如果有步骤特定的评估标准，则添加
         if idx < len(self.steps):
             step_info = self.steps[idx]
             if "evaluation_criteria" in step_info:
-                # Apply custom evaluation criteria
+                # 应用自定义评估标准
                 evaluation.update(self._evaluate_with_criteria(output, step_info["evaluation_criteria"]))
         
         return evaluation
     
     def _evaluate_with_criteria(self, output: str, criteria: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Evaluate output using specific criteria.
+        使用特定标准评估输出
         
         Args:
-            output: Model output
-            criteria: Evaluation criteria
+            output: 模型输出
+            criteria: 评估标准
             
         Returns:
-            Evaluation results
+            评估结果
         """
         results = {}
         
