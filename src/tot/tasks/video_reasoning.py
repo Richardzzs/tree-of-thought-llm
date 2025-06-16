@@ -36,7 +36,8 @@ class VideoReasoningTask(Task):
         """
         super().__init__()
         self.video_url = video_url
-        self.reasoning_type = reasoning_type        self.model = model
+        self.reasoning_type = reasoning_type
+        self.model = model
         self.video_processor = create_video_processor(api_key, api_base)
         self.steps = []
         self.current_step = 0
