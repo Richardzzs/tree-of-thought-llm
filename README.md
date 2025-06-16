@@ -100,3 +100,63 @@ Please cite the paper and star this repo if you use ToT and find it interesting/
       primaryClass={cs.CL}
 }
 ```
+
+## Video Processing with Tree of Thoughts
+
+This repository now includes integrated video processing capabilities using vision-language models for visual reasoning tasks within the Tree of Thoughts framework.
+
+### Additional Dependencies for Video Processing
+For video processing features, install the additional dependencies:
+```bash
+pip install Pillow qwen-vl-utils "openai>=1.0.0"
+```
+
+### Video Processing Setup
+1. Set up a vLLM server with a vision-language model (e.g., Qwen2.5-VL-32B-Instruct):
+```bash
+# Example vLLM server command
+vllm serve Qwen/Qwen2.5-VL-32B-Instruct --host 0.0.0.0 --port 8000
+```
+
+2. Configure the API endpoint:
+```bash
+export OPENAI_API_KEY="EMPTY"
+export OPENAI_API_BASE="http://localhost:8000/v1"
+```
+
+### Quick Start with Video Reasoning
+```python
+from tot.tasks.video_reasoning import create_video_summary_task
+from tot.video_processing import create_video_processor
+
+# Basic video analysis
+processor = create_video_processor()
+result = processor.process_video_query(
+    video_url="path/to/your/video.mp4",
+    query="请用表格总结一下视频中的商品特点"
+)
+print(result)
+
+# Tree of Thoughts video reasoning
+task = create_video_summary_task("path/to/your/video.mp4")
+thoughts = task.generate_initial_thoughts("请分析这个视频的内容")
+```
+
+### Video Reasoning Example
+Run the video reasoning example:
+```bash
+python video_reasoning_example.py "path/to/your/video.mp4" --mode all
+```
+
+Options:
+- `--mode basic`: Basic video analysis only
+- `--mode tot`: Tree of Thoughts reasoning only  
+- `--mode steps`: Step-by-step reasoning only
+- `--mode all`: Run all modes (default)
+
+### Video Task Features
+- **Multi-perspective Analysis**: Generate thoughts from different visual perspectives
+- **Thought Expansion**: Expand promising thoughts into detailed sub-analyses
+- **Quality Evaluation**: Assess thought quality using heuristic measures
+- **Structured Output**: Support for tables, lists, and organized summaries
+- **Step-by-step Reasoning**: Configurable reasoning steps for complex analysis
